@@ -23,6 +23,22 @@ class ParserTest {
 	}
 	
 	@Test
+	void testSetFormat3() {
+		p = new Parser();
+		p.setFormatToSave("column");
+		assertEquals("column", p.getFormatToSave());
+
+		p.setFormatToSave("row");
+		assertEquals("row", p.getFormatToSave());
+		
+		p.setFormatToSave("column");
+		assertNotEquals("row", p.getFormatToSave());
+		
+		p.setFormatToSave("row");
+		assertNotEquals("column", p.getFormatToSave());
+	}
+	
+	@Test
 	void testSave() {
 		fail("Not yet implemented");
 	}
