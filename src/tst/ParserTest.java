@@ -9,10 +9,17 @@ class ParserTest {
 	private Parser p;
 	
 	@Test
-	void testSetFormat() {
+	void testSetFormat1() {
 		p = new Parser();
 		p.setFormatToSave("column");
 		assertEquals("column", p.getFormatToSave());
+	}
+
+	@Test
+	void testSetFormat2() {
+		p = new Parser();
+		p.setFormatToSave("row");
+		assertNotEquals("column", p.getFormatToSave());
 	}
 	
 	@Test
