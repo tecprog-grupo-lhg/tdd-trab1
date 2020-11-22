@@ -20,6 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import exceptions.ArquivoNaoEncontradoException;
 
 class ParserTest {
 		private Parser p;
@@ -105,14 +106,15 @@ class ParserTest {
     public void setDelimiterTest3() throws DelimitadorInvalidoException {
         p = new Parser();
 
-		p.setDelimiter("\n");
-		assertEquals('\n', p.getDelimiter());
+				p.setDelimiter("\n");
+				assertEquals('\n', p.getDelimiter());
 
-		p.setDelimiter(";");
-		assertEquals(';', p.getDelimiter());
+				p.setDelimiter(";");
+				assertEquals(';', p.getDelimiter());
 
-		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter("abc"));
-		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter(""));
+				Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter("abc"));
+				Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter(""));
+		}
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -130,13 +132,13 @@ class ParserTest {
     		"\t", "\b", "\n", "\r",
     		"\f", "\'", "\"", "\\",
     		"\\t", "\\b", "\\n", "\\r",
-    		"\\f", "\\\'", "\\\"", "\\\\"
-    	})
+				"\\f", "\\\'", "\\\"", "\\\\"
+		})
     void setDelimiterParameterizedTestValidDelimiters(String delimiter) throws DelimitadorInvalidoException {
-    	p = new Parser();
-    	p.setDelimiter(delimiter);
-    	char delimiterAsChar = delimiter.charAt(0);
-		assertEquals(delimiterAsChar, p.getDelimiter());
+				p = new Parser();
+				p.setDelimiter(delimiter);
+				char delimiterAsChar = delimiter.charAt(0);
+				assertEquals(delimiterAsChar, p.getDelimiter());
     }
     
     @ParameterizedTest
@@ -155,15 +157,21 @@ class ParserTest {
     		"\\;", "\\ "
     })
     void setDelimiterParameterizedTestInvalidDelimiters(String delimiter) throws DelimitadorInvalidoException {
-    	p = new Parser();
-    	Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter(delimiter));
+				p = new Parser();
+				Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter(delimiter));
     }
 		
 		@Test
-    public void setFileTest1() {
-      String fileName = "totalTime.out";
-      p = new Parser();
-      p.setFile(fileName);
-      assertEquals(fileName, p.getFile());
+    public void setFileTest1() throws ArquivoNaoEncontradoException {
+				String fileName = "totalTime.out";
+				p = new Parser();
+				p.setFile(fileName);
+				assertEquals(fileName, p.getFile());
     }
+    
+    @Test
+    public void setFileTest2() throws ArquivoNaoEncontradoException {
+				p = new Parser();
+				Assertions.assertThrows(ArquivoNaoEncontradoException.class, () -> p.setFile("thisfiledoesnotexistsforsure.txt"));
+		}
 }

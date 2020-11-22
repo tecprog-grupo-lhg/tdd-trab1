@@ -8,6 +8,8 @@ import exceptions.EscritaNaoPermitidaException;
 import exceptions.DelimitadorInvalidoException;
 import utils.Helpers;
 
+import exceptions.ArquivoNaoEncontradoException;
+
 public class Parser {
 	private char delimiter;
 	private File file;
@@ -37,13 +39,20 @@ public class Parser {
 		return this.output;
 	}
 	
-	public void setFile(String fileName) {
+	public void setFile(String fileName) throws ArquivoNaoEncontradoException {
 		File file = new File(fileName);
+		checkIfFileExists(file);
 		this.file = file;
 	}
 	
 	public String getFile() {
 		return "totalTime.out";
+	}
+
+	private void checkIfFileExists(File file) throws ArquivoNaoEncontradoException {
+		if(!file.exists()) {
+			throw new ArquivoNaoEncontradoException(file.getName());
+		}
 	}
 
 	public char getDelimiter() {
