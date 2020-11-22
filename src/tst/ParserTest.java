@@ -113,7 +113,6 @@ class ParserTest {
 
 		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter("abc"));
 		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter(""));
-    }
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -159,5 +158,12 @@ class ParserTest {
     	p = new Parser();
     	Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter(delimiter));
     }
-    
+		
+		@Test
+    public void setFileTest1() {
+      String fileName = "totalTime.out";
+      p = new Parser();
+      p.setFile(fileName);
+      assertEquals(fileName, p.getFile());
+    }
 }

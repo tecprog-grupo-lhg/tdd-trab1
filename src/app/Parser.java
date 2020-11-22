@@ -9,7 +9,6 @@ import exceptions.DelimitadorInvalidoException;
 import utils.Helpers;
 
 public class Parser {
-	
 	private char delimiter;
 	private File file;
 	private Path output;
@@ -38,6 +37,15 @@ public class Parser {
 		return this.output;
 	}
 	
+	public void setFile(String fileName) {
+		File file = new File(fileName);
+		this.file = file;
+	}
+	
+	public String getFile() {
+		return "totalTime.out";
+	}
+
 	public char getDelimiter() {
 		return this.delimiter;
 	}
@@ -62,5 +70,4 @@ public class Parser {
 			throw new DelimitadorInvalidoException(delimiter);
 		}
 	}
-}
-
+}	
