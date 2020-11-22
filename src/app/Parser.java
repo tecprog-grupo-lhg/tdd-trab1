@@ -8,6 +8,7 @@ import exceptions.EscritaNaoPermitidaException;
 
 public class Parser {
 	
+	private char delimiter;
 	private File file;
 	private Path output;
 	
@@ -34,5 +35,13 @@ public class Parser {
 	public Path getPath() {
 		return this.output;
 	}
+	
+	public char getDelimiter() {
+		return this.delimiter;
+	}
+	
+	public void setDelimiter() {
+		this.delimiter = 'x';
+	}	
 }
 

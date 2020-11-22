@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.nio.file.Path;
-
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -87,5 +86,12 @@ class ParserTest {
 		@Test
 		void testDelimiter() {
 			fail("Not yet implemented");
+		}
+	
+		@Test
+		void setDelimiterTest() {
+			p = new Parser();
+			p.setDelimiter();
+			assertEquals('x', p.getDelimiter());
 		}
 }
