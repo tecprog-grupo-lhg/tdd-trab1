@@ -25,8 +25,7 @@ public class Parser {
 	
 	private void isValidEscapedChar(String delimiter) throws DelimitadorInvalidoException {
 		char escaped_delimiter = delimiter.charAt(1);
-		char[] escapableChars = new char[] { 't', 'b', 'n', 'r', 'f', '\'', '"', '\\' };
-		
+		char[] escapableChars = new char[] { 't', 'b', 'n', 'r', 'f', '\'', '\"', '\\' };
 		if (!Helpers.arrayContainsChar(escaped_delimiter, escapableChars)) {
 			throw new DelimitadorInvalidoException(delimiter);
 		}
