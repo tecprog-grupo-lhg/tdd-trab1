@@ -14,7 +14,7 @@ public class Parser {
 	}
 	
 	public String getFile() {
-		return "totalTime.out";
+		return this.file.getName();
 	}
 	
 	private void checkIfFileExists(File file) throws ArquivoNaoEncontradoException {
