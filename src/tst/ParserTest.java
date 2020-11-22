@@ -4,10 +4,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-class ParserTest {
+import app.Parser;
 
+class ParserTest {
+	private Parser p;
+	
 	@Test
-	void testDelimiter() {
-		fail("Not yet implemented");
+	void setDelimiterTest() {
+		p = new Parser();
+		p.setDelimiter();
+		assertEquals('x', p.getDelimiter());
 	}
 }
