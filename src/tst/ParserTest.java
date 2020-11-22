@@ -96,4 +96,18 @@ class ParserTest {
 		p = new Parser();
 		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter("abc"));
     }
+	
+    @Test
+    public void setDelimiterTest3() throws DelimitadorInvalidoException {
+        p = new Parser();
+
+		p.setDelimiter("\n");
+		assertEquals('\n', p.getDelimiter());
+
+		p.setDelimiter(";");
+		assertEquals(';', p.getDelimiter());
+
+		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter("abc"));
+		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter(""));
+    }
 }
