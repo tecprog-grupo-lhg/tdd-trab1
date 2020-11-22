@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import app.Parser;
 import exceptions.EscritaNaoPermitidaException;
+import exceptions.DelimitadorInvalidoException;
 
 class ParserTest {
 		private Parser p;
@@ -82,16 +83,17 @@ class ParserTest {
 
     	Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutPut("~/root"));
     }
+
+	@Test
+	void setDelimiterTest1() throws DelimitadorInvalidoException {
+		p = new Parser();
+		p.setDelimiter("\n");
+		assertEquals('\n', p.getDelimiter());
+	}
 	
-		@Test
-		void testDelimiter() {
-			fail("Not yet implemented");
-		}
-	
-		@Test
-		void setDelimiterTest() {
-			p = new Parser();
-			p.setDelimiter();
-			assertEquals('x', p.getDelimiter());
-		}
+	@Test
+	void setDelimiterTest2() throws DelimitadorInvalidoException {
+		p = new Parser();
+		Assertions.assertThrows(DelimitadorInvalidoException.class, () -> p.setDelimiter("abc"));
+    }
 }
