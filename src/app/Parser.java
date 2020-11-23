@@ -3,18 +3,18 @@ package app;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Parser {
 	private File file;
-	private ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
+	private ArrayList<ArrayList<String>> table;
 	
 	public void setFile(File file) {
 		this.file = file;
 	}
 	
 	public void parse() {
+		table = new ArrayList<ArrayList<String>>();
 		int evolution = 0;
 		try {
 			Scanner sc = new Scanner(file);

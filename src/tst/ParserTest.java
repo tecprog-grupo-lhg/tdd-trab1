@@ -48,4 +48,36 @@ class ParserTest {
 
 		assertEquals(expected, p.getTable());
     }
+	
+	@Test
+    public void parseTest3() {
+		p = new Parser();
+		File file = new File("analysis.out");
+		p.setFile(file);
+		p.parse();
+		
+		ArrayList<ArrayList<String>> expected = new ArrayList<ArrayList<String>>(
+			Arrays.asList(
+				new ArrayList<String>(Arrays.asList("333", "807", "123")),
+				new ArrayList<String>(Arrays.asList("333", "807")),
+				new ArrayList<String>(Arrays.asList("333"))
+			)
+		);
+
+		assertEquals(expected, p.getTable());
+		
+		file = new File("analysis2.out");
+		p.setFile(file);
+		p.parse();
+		
+		expected = new ArrayList<ArrayList<String>>(
+			Arrays.asList(
+				new ArrayList<String>(Arrays.asList("243", "645", "123", "567")),
+				new ArrayList<String>(Arrays.asList("333", "807", "756", "234", "345")),
+				new ArrayList<String>(Arrays.asList("333", "756", "123"))
+			)
+		);
+
+		assertEquals(expected, p.getTable());
+    }
 }
