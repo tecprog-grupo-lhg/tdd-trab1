@@ -59,6 +59,48 @@ class ParserTest {
     }
 	
 	@Test
+    public void saveRowTest2() throws IOException {
+		p = new Parser();
+		File output = new File("analysisTimeTab.out");
+		p.setOutput(output.getAbsolutePath());
+		p.setFormat("linhas");
+		
+		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
+			Arrays.asList(
+				new ArrayList<String>(Arrays.asList("333")),
+				new ArrayList<String>(Arrays.asList("333", "807")),
+				new ArrayList<String>(Arrays.asList("333", "807", "123"))
+			)
+		);
+		
+		p.setTable(table);
+		
+		p.setDelimiter(',');
+		p.save();
+		
+		ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
+				"1,333",
+				"2,333,807",
+				"3,333,807,123"));
+
+		ArrayList<String> linhas = new ArrayList<String>();
+		
+		try {
+			Scanner sc = new Scanner(output);
+			while (sc.hasNextLine()) {
+		        final String linha = sc.nextLine();
+		        linhas.add(linha);
+		    }
+			sc.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		output.delete();
+		assertEquals(expected, linhas);
+    }
+	
+	@Test
     public void saveColumnTest1() throws IOException {
 		p = new Parser();
 		File output = new File("analysisTimeTab.out");
@@ -67,9 +109,9 @@ class ParserTest {
 		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
-				new ArrayList<String>(Arrays.asList("333", "807", "123")),
-				new ArrayList<String>(Arrays.asList("333", "807")),
-				new ArrayList<String>(Arrays.asList("333"))
+					new ArrayList<String>(Arrays.asList("333", "807", "123")),
+					new ArrayList<String>(Arrays.asList("333", "807")),
+					new ArrayList<String>(Arrays.asList("333"))
 			)
 		);
 		
@@ -83,6 +125,49 @@ class ParserTest {
 				"333;333;333",
 				"807;807",
 				"123"));
+
+		ArrayList<String> linhas = new ArrayList<String>();
+		
+		try {
+			Scanner sc = new Scanner(output);
+			while (sc.hasNextLine()) {
+		        final String linha = sc.nextLine();
+		        linhas.add(linha);
+		    }
+			sc.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		output.delete();
+		assertEquals(expected, linhas);
+    }
+	
+	@Test
+    public void saveColumnTest2() throws IOException {
+		p = new Parser();
+		File output = new File("analysisTimeTab.out");
+		p.setOutput(output.getAbsolutePath());
+		p.setFormat("colunas");
+		
+		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
+			Arrays.asList(
+					new ArrayList<String>(Arrays.asList("333")),
+					new ArrayList<String>(Arrays.asList("333", "807")),
+					new ArrayList<String>(Arrays.asList("333", "807", "123"))
+			)
+		);
+		
+		p.setTable(table);
+		
+		p.setDelimiter(',');
+		p.save();
+		
+		ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
+				"1,2,3",
+				"333,333,333",
+				",807,807",
+				",,123"));
 
 		ArrayList<String> linhas = new ArrayList<String>();
 		
