@@ -28,11 +28,11 @@ public class Parser {
 		}
 	}
 	
-	public void saveAsRow() {
-		
+	private void saveAsRow() {
+		System.out.println("Saving as row");
 	}
 
-	public void saveAsColumn() {
-
+	private void saveAsColumn() {
+		System.out.println("Saving as column");
 	}
 }

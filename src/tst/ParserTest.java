@@ -2,7 +2,11 @@ package tst;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -12,6 +16,17 @@ import exceptions.FormatoDeSaídaInvalidoException;
 
 class ParserTest {
 	private Parser p;
+	
+	// @TODO: remove this block afterwards; only being used so that we can test the stdout
+	// at "save" test { checking that the method is in fact correctly calling the correspondent
+	// function
+	private final PrintStream standardOut = System.out;
+	private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+	@BeforeEach
+	public void setUp() {
+	    System.setOut(new PrintStream(outputStreamCaptor));
+	}
+	// -----------------------------------------------------------------------------------
 	
 	@Test
 	void testSetFormat1() throws FormatoDeSaídaInvalidoException {
@@ -60,17 +75,10 @@ class ParserTest {
     }
     
 	@Test
-	void testSave() {
-		fail("Not yet implemented");	
-	}
-	
-	@Test
-	void testSaveAsColumn() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testSaveAsRow() {
-		fail("Not yet implemented");
+	void testSave() throws FormatoDeSaídaInvalidoException {
+		p = new Parser();
+		p.setFormatToSave("row");
+		p.save();
+		assertEquals("Saving as row", outputStreamCaptor.toString().trim());	
 	}
 }
