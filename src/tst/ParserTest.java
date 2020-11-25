@@ -36,10 +36,21 @@ class ParserTest {
 	      p = new Parser();
 	      p.setFile("analysisTime.out");
 	      
-
 	      Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutPut("~/root"));
-	      
 	}
 
+	@Test
+	void testWritOutputFile3() throws EscritaNaoPermitidaException {
+	      p = new Parser();
+	      p.setFile("analysisTime.out");
+	      
+	      p.setOutPut( new File(System.getProperty("user.dir")).toPath().toString());	      
+	      Path actual = p.getPath();
+	      
+	      Path path =  new File(System.getProperty("user.dir") + "/analysisTimeTab.out").toPath();
+	      
+	      assertEquals(path, actual);
+	      Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutPut("~/root"));
+	}
 	
 }
