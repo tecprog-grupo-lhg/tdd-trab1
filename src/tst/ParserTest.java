@@ -1,13 +1,12 @@
 package tst;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.nio.file.Path;
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -22,23 +21,10 @@ import java.io.PrintStream;
 import exceptions.FormatoDeSaídaInvalidoException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import app.Parser;
-
 
 class ParserTest {
 
@@ -104,74 +90,75 @@ class ParserTest {
 		}
 	};	
 		@Test
-		void testWritOutputFile() throws EscritaNaoPermitidaException {
-					p = new Parser();
-					p.setFile("analysisTime.out");
-					p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());	      
-					Path actual = p.getPath();
+		void testWriteOutputFile() throws ArquivoNaoEncontradoException,EscritaNaoPermitidaException {
+			p = new Parser();
+			p.setFile("analysisTime.out");
+			p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+			Path actual = p.getPath();
 					
-					Path path =  new File(System.getProperty("user.dir") + "/analysisTimeTab.out").toPath();
+			Path path =  new File(System.getProperty("user.dir") + "/analysisTimeTab.out").toPath();
 					
-					assertEquals(path, actual);
+			assertEquals(path, actual);
 		}
 	
 		@Test
-		void testWritOutputFile2() throws EscritaNaoPermitidaException {
-					p = new Parser();
-					p.setFile("analysisTime.out");
+		void testWriteOutputFile2() throws ArquivoNaoEncontradoException,EscritaNaoPermitidaException {
+			p = new Parser();
+			p.setFile("analysisTime.out");
 					
-					Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutput("~/root"));
+			Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutput("~/root"));
 		}
 
 		@Test
-		void testWritOutputFile3() throws EscritaNaoPermitidaException {
-					p = new Parser();
-					p.setFile("analysisTime.out");
+		void testWriteOutputFile3() throws ArquivoNaoEncontradoException,EscritaNaoPermitidaException {
+			p = new Parser();
+			p.setFile("analysisTime.out");
 					
-					p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());	      
-					Path actual = p.getPath();
+			p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());	      
+			Path actual = p.getPath();
 					
-					Path path =  new File(System.getProperty("user.dir") + "/analysisTimeTab.out").toPath();
+			Path path =  new File(System.getProperty("user.dir") + "/analysisTimeTab.out").toPath();
 					
-					assertEquals(path, actual);
-					Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutput("~/root"));
+			assertEquals(path, actual);
+			Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutput("~/root"));
 		}
 	
-    @ParameterizedTest
-    @CsvSource( {
+		@ParameterizedTest
+		@CsvSource( {
     		"totalTime.out,/totalTimeTab.out",
     		"analysisTime.out,/analysisTimeTab.out",
     		})
-    void testWriteOutputFileValidPaths(String input, String correctOutput) throws EscritaNaoPermitidaException {
-    	p = new Parser();
-    	p.setFile(input);
-    	p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		void testWriteOutputFileValidPaths(String input, String correctOutput) throws EscritaNaoPermitidaException, ArquivoNaoEncontradoException {
+			p = new Parser();
+			p.setFile(input);
+			p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
     	
-    	Path actual = p.getPath();
-    	 Path path =  new File(System.getProperty("user.dir") + correctOutput).toPath();
+			Path actual = p.getPath();
+			Path path =  new File(System.getProperty("user.dir") + correctOutput).toPath();
     	
-    	assertEquals(path, actual);
-    }
+			assertEquals(path, actual);
+		}
     
-    @ParameterizedTest
-    @CsvSource( {
-    		"totalTime.out,/totalTimeTab.out",
+		@ParameterizedTest
+		@CsvSource( {
+			"totalTime.out,/totalTimeTab.out",
     		"analysisTime.out,/analysisTimeTab.out",
     		})
-    void testWriteOutputFileValidPaths2(String input, String correctOutput) throws EscritaNaoPermitidaException {
-    	p = new Parser();
-    	p.setFile(input);
+		void testWriteOutputFileValidPaths2(String input, String correctOutput) throws EscritaNaoPermitidaException, ArquivoNaoEncontradoException {
+			p = new Parser();
+			p.setFile(input);
 
-    	Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutput("~/root"));
-    }
+			Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutput("~/root"));
+		}
 
 
 	@Test
-    public void saveRowTest1() throws IOException {
+    public void saveRowTest1() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setFormatToSave("linhas");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("row");
 		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
@@ -183,7 +170,7 @@ class ParserTest {
 		
 		p.setTable(table);
 		
-		p.setDelimiter(';');
+		p.setDelimiter(";");
 		p.save();
 		
 		ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
@@ -209,11 +196,12 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveRowTest2() throws IOException {
+    public void saveRowTest2() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setFormatToSave("linhas");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("row");
 		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
@@ -225,7 +213,7 @@ class ParserTest {
 		
 		p.setTable(table);
 		
-		p.setDelimiter(',');
+		p.setDelimiter(",");
 		p.save();
 		
 		ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
@@ -251,11 +239,12 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveRowTest3() throws IOException {
+    public void saveRowTest3() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setFormatToSave("linhas");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("row");
 		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
@@ -267,7 +256,7 @@ class ParserTest {
 		
 		p.setTable(table);
 		
-		p.setDelimiter('x');
+		p.setDelimiter("x");
 		p.save();
 		
 		ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
@@ -288,13 +277,13 @@ class ParserTest {
 			e.printStackTrace();
 		}
 		
-		output.delete();
 		assertEquals(expected, linhas);
 		
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setFormatToSave("linhas");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("row");
 		
 		table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
@@ -306,7 +295,7 @@ class ParserTest {
 		
 		p.setTable(table);
 		
-		p.setDelimiter(',');
+		p.setDelimiter(",");
 		p.save();
 		
 		expected = new ArrayList<String>(Arrays.asList(
@@ -332,11 +321,12 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveColumnTest1() throws IOException {
+    public void saveColumnTest1() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setFormatToSave("colunas");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("column");
 		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
@@ -348,7 +338,7 @@ class ParserTest {
 		
 		p.setTable(table);
 		
-		p.setDelimiter(';');
+		p.setDelimiter(";");
 		p.save();
 		
 		ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
@@ -495,22 +485,11 @@ class ParserTest {
     		"totalTime2.out",
     		"analysisTime2.out",
     		})
-    void setFileParameterizedTestNotExistingFiles(String fileName) throws ArquivoNaoEncontradoException {
-    	p = new Parser();
-    	Assertions.assertThrows(ArquivoNaoEncontradoException.class, () -> p.setFile(fileName));
-    }
+    	void setFileParameterizedTestNotExistingFiles(String fileName) throws ArquivoNaoEncontradoException {
+    		p = new Parser();
+    		Assertions.assertThrows(ArquivoNaoEncontradoException.class, () -> p.setFile(fileName));
+    	}
 
-		
-		// @TODO: remove this block afterwards; only being used so that we can test the stdout
-		// at "save" test { checking that the method is in fact correctly calling the correspondent
-		// function
-		private final PrintStream standardOut = System.out;
-		private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-		@BeforeEach
-		public void setUp() {
-				System.setOut(new PrintStream(outputStreamCaptor));
-		}
-		// -----------------------------------------------------------------------------------
 		
 		@Test
 		void testSetFormat1() throws FormatoDeSaídaInvalidoException {
@@ -557,14 +536,6 @@ class ParserTest {
 				p = new Parser();
 			Assertions.assertThrows(FormatoDeSaídaInvalidoException.class, () -> p.setFormatToSave(format));
 			}
-			
-		@Test
-		void testSave() throws FormatoDeSaídaInvalidoException {
-			p = new Parser();
-			p.setFormatToSave("row");
-			p.save();
-			assertEquals("Saving as row", outputStreamCaptor.toString().trim());	
-		}
 
 	private Object[][] parameters = new Object[][]{
 		{
@@ -628,10 +599,9 @@ class ParserTest {
 	};
 
 	@Test
-    public void parseTest1() {
+    public void parseTest1() throws ArquivoNaoEncontradoException {
 		p = new Parser();
-		File file = new File("analysis.out");
-		p.setFile(file);
+		p.setFile("analysis.out");
 		p.parse();
 		
 		ArrayList<ArrayList<String>> expected = new ArrayList<ArrayList<String>>(
@@ -646,10 +616,9 @@ class ParserTest {
     }
 
 	@Test
-    public void parseTest2() {
+    public void parseTest2() throws ArquivoNaoEncontradoException {
 		p = new Parser();
-		File file = new File("analysis2.out");
-		p.setFile(file);
+		p.setFile("analysis2.out");
 		p.parse();
 		
 		ArrayList<ArrayList<String>> expected = new ArrayList<ArrayList<String>>(
@@ -664,10 +633,9 @@ class ParserTest {
     }
 	
 	@Test
-    public void parseTest3() {
+    public void parseTest3() throws ArquivoNaoEncontradoException {
 		p = new Parser();
-		File file = new File("analysis.out");
-		p.setFile(file);
+		p.setFile("analysis.out");
 		p.parse();
 		
 		ArrayList<ArrayList<String>> expected = new ArrayList<ArrayList<String>>(
@@ -680,8 +648,7 @@ class ParserTest {
 
 		assertEquals(expected, p.getTable());
 		
-		file = new File("analysis2.out");
-		p.setFile(file);
+		p.setFile("analysis2.out");
 		p.parse();
 		
 		expected = new ArrayList<ArrayList<String>>(
@@ -697,23 +664,23 @@ class ParserTest {
 	
 	@ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 4})
-    void parseParameterizedTest(int index) {
+    void parseParameterizedTest(int index) throws ArquivoNaoEncontradoException {
 		p = new Parser();
-		File file = new File((String)parameters[index][0]);
-		p.setFile(file);
+		p.setFile((String)parameters[index][0]);
 		p.parse();
 		
 		Object obj = parameters[index][1];
 
 		assertEquals(obj, p.getTable());
-		}
+	}
 
-		@Test
-    public void saveColumnTest2() throws IOException {
-			p = new Parser();
-			File output = new File("analysisTimeTab.out");
-			p.setOutput(output.getAbsolutePath());
-			p.setFormatToSave("colunas");
+	@Test
+    public void saveColumnTest2() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
+		p = new Parser();
+		p.setFile("analysisTime.out");
+		File output = new File("analysisTimeTab.out");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("column");
 			
 			ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
 				Arrays.asList(
@@ -725,7 +692,7 @@ class ParserTest {
 			
 			p.setTable(table);
 			
-			p.setDelimiter(',');
+			p.setDelimiter(",");
 			p.save();
 			
 			ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
@@ -752,11 +719,12 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveColumnTest3() throws IOException {
+    public void saveColumnTest3() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setFormatToSave("colunas");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("column");
 		
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
@@ -768,7 +736,7 @@ class ParserTest {
 		
 		p.setTable(table);
 		
-		p.setDelimiter(';');
+		p.setDelimiter(";");
 		p.save();
 		
 		ArrayList<String> expected = new ArrayList<String>(Arrays.asList(
@@ -794,9 +762,10 @@ class ParserTest {
 		assertEquals(expected, linhas);
 		
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setFormatToSave("colunas");
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setFormatToSave("column");
 		
 		table = new ArrayList<ArrayList<String>>(
 			Arrays.asList(
@@ -808,7 +777,7 @@ class ParserTest {
 		
 		p.setTable(table);
 		
-		p.setDelimiter(',');
+		p.setDelimiter(",");
 		p.save();
 		
 		expected = new ArrayList<String>(Arrays.asList(
@@ -836,18 +805,19 @@ class ParserTest {
 	
 	@ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
-    void saveParameterizedTest(int index) {
+    void saveParameterizedTest(int index) throws EscritaNaoPermitidaException, DelimitadorInvalidoException, FormatoDeSaídaInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
+		p.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
-		p.setOutput(output.getAbsolutePath());
-		p.setDelimiter(';');
+		p.setOutput( new File(System.getProperty("user.dir")).toPath().toString());
+		p.setDelimiter(";");
 		
 		ArrayList<ArrayList<String>> table = parametersTable[index];
 		
 		p.setTable(table);
 		
 		// linha
-		p.setFormatToSave("linhas");
+		p.setFormatToSave("row");
 		p.save();
 		ArrayList<String> linhas = new ArrayList<String>();
 		
@@ -865,7 +835,7 @@ class ParserTest {
 		assertEquals(parametersAnswer[index][0], linhas);
 		
 		// coluna
-		p.setFormatToSave("colunas");
+		p.setFormatToSave("column");
 		p.save();
 		linhas = new ArrayList<String>();
 		

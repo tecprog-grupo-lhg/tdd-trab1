@@ -20,7 +20,6 @@ public class Parser {
 	private File file;
 	private Path output;
 	private ArrayList<ArrayList<String>> table;
-	private String format;
 
 	public void setOutput(String output) throws EscritaNaoPermitidaException {
 		Path path = new File(output).toPath();
@@ -105,14 +104,6 @@ public class Parser {
 		} else {
 			saveAsRow();
 		}
-	}
-	
-	private void saveAsRow() {
-		System.out.println("Saving as row");
-	}
-
-	private void saveAsColumn() {
-		System.out.println("Saving as column");
 	}
 
 	public void parse() {
