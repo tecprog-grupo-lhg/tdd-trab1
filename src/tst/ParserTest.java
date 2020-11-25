@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import app.Parser;
 import exceptions.EscritaNaoPermitidaException;
@@ -52,5 +55,33 @@ class ParserTest {
 	      assertEquals(path, actual);
 	      Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutPut("~/root"));
 	}
+	
+    @ParameterizedTest
+    @CsvSource( {
+    		"totalTime.out,/totalTimeTab.out",
+    		"analysisTime.out,/analysisTimeTab.out",
+    		})
+    void testWriteOutputFileValidPaths(String input, String correctOutput) throws EscritaNaoPermitidaException {
+    	p = new Parser();
+    	p.setFile(input);
+    	p.setOutPut( new File(System.getProperty("user.dir")).toPath().toString());
+    	
+    	Path actual = p.getPath();
+    	 Path path =  new File(System.getProperty("user.dir") + correctOutput).toPath();
+    	
+    	assertEquals(path, actual);
+    }
+    
+    @ParameterizedTest
+    @CsvSource( {
+    		"totalTime.out,/totalTimeTab.out",
+    		"analysisTime.out,/analysisTimeTab.out",
+    		})
+    void testWriteOutputFileValidPaths2(String input, String correctOutput) throws EscritaNaoPermitidaException {
+    	p = new Parser();
+    	p.setFile(input);
+
+    	Assertions.assertThrows(EscritaNaoPermitidaException.class, () -> p.setOutPut("~/root"));
+    }
 	
 }
