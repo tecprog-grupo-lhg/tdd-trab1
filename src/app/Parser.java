@@ -3,7 +3,9 @@ package app;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
 import exceptions.EscritaNaoPermitidaException;
 import exceptions.DelimitadorInvalidoException;
 import exceptions.FormatoDeSaídaInvalidoException;
@@ -14,6 +16,8 @@ public class Parser {
 	private char delimiter;
 	private File file;
 	private Path output;
+	private File file;
+	private ArrayList<ArrayList<String>> table;
 
 	public void setOutPut(String output) throws EscritaNaoPermitidaException {
 		Path path = new File(output).toPath();
@@ -106,5 +110,31 @@ public class Parser {
 
 	private void saveAsColumn() {
 		System.out.println("Saving as column");
+	}
+
+	public void parse() {
+		table = new ArrayList<ArrayList<String>>();
+		int evolution = 0;
+		try {
+			Scanner sc = new Scanner(file);
+			while (sc.hasNextLine()) {
+		        final String linha = sc.nextLine();
+
+		        if(linha.charAt(0) == '-') {
+		        	table.add(new ArrayList<String>());
+		        	evolution++;
+		        }
+		        else {
+		        	table.get(evolution-1).add(linha);
+		        }
+		    }
+			sc.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<ArrayList<String>> getTable() {
+		return this.table;
 	}
 }
