@@ -174,4 +174,17 @@ class ParserTest {
 				p = new Parser();
 				Assertions.assertThrows(ArquivoNaoEncontradoException.class, () -> p.setFile("thisfiledoesnotexistsforsure.txt"));
 		}
+    
+    @Test
+    public void setFileTest3() throws ArquivoNaoEncontradoException {
+        p = new Parser();
+
+        p.setFile("totalTime.out");
+        assertEquals("totalTime.out", p.getFile());
+        
+        p.setFile("analysisTime.out");
+        assertEquals("analysisTime.out", p.getFile());
+
+        Assertions.assertThrows(ArquivoNaoEncontradoException.class, () -> p.setFile("thisfiledoesnotexistsforsure.txt"));
+    }
 }

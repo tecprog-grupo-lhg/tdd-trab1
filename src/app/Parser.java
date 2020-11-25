@@ -14,12 +14,7 @@ public class Parser {
 	private char delimiter;
 	private File file;
 	private Path output;
-	
-	public void setFile(String fileName) {
-		File file = new File(fileName);
-		this.file = file;
-	}
-	
+
 	public void setOutPut(String output) throws EscritaNaoPermitidaException {
 		Path path = new File(output).toPath();
 		
@@ -46,7 +41,7 @@ public class Parser {
 	}
 	
 	public String getFile() {
-		return "totalTime.out";
+		return this.file.getName();
 	}
 
 	private void checkIfFileExists(File file) throws ArquivoNaoEncontradoException {
