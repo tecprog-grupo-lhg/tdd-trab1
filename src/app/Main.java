@@ -6,7 +6,7 @@ import java.util.Scanner;
 import exceptions.ArquivoNaoEncontradoException;
 import exceptions.DelimitadorInvalidoException;
 import exceptions.EscritaNaoPermitidaException;
-import exceptions.FormatoDeSaídaInvalidoException;
+import exceptions.FormatoDeSaidaInvalidoException;
 
 public class Main {
 
@@ -68,7 +68,7 @@ public class Main {
 			try {
 				p.setFormatToSave(format);
 				invalido = false;
-			} catch (FormatoDeSaídaInvalidoException e) {
+			} catch (FormatoDeSaidaInvalidoException e) {
 				System.out.print("O formato '" + format + "' não é válido. Tente novamente: ");
 			}
 		}

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import exceptions.EscritaNaoPermitidaException;
 import exceptions.DelimitadorInvalidoException;
-import exceptions.FormatoDeSaídaInvalidoException;
+import exceptions.FormatoDeSaidaInvalidoException;
 import exceptions.ArquivoNaoEncontradoException;
 import utils.Helpers;
 import java.io.FileWriter;
@@ -87,14 +87,14 @@ public class Parser {
 		return this.formatToSave;
 	}
 	
-	public void setFormatToSave(String format) throws FormatoDeSaídaInvalidoException {
+	public void setFormatToSave(String format) throws FormatoDeSaidaInvalidoException {
 		checkValidOutputFormat(format);
 		this.formatToSave = format;
 	}
 	
-	private void checkValidOutputFormat(String format) throws FormatoDeSaídaInvalidoException {
+	private void checkValidOutputFormat(String format) throws FormatoDeSaidaInvalidoException {
 		if (!format.equals("column") && !format.equals("row")) {
-			throw new FormatoDeSaídaInvalidoException(format);
+			throw new FormatoDeSaidaInvalidoException(format);
 		}
 	}
 	
