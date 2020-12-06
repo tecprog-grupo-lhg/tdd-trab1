@@ -22,7 +22,7 @@ public class Main {
 			final String fileName = sc.next();
 
 			try {
-				p.setFile(fileName);
+				p.fileManipulation.input.setFile(fileName);
 				invalido = false;
 			} catch (ArquivoNaoEncontradoException e) {
 				System.out.print("O arquivo '" + fileName + "' não foi encontrado. Tente novamente: ");
@@ -53,7 +53,7 @@ public class Main {
 			final String output = sc.nextLine();
 			
 			try {
-				p.setOutput(output);
+				p.fileManipulation.output.setPath(output);
 				invalido = false;
 			} catch (EscritaNaoPermitidaException e) {
 				System.out.print("O caminho '" + output + "' não tem permissão de escrita. Tente novamente: ");
@@ -83,7 +83,7 @@ public class Main {
 		
 		if(escolha.equals("s")) {
 			try {
-				Runtime.getRuntime().exec(new String[] {"xdg-open", p.getPath().toString()});
+				Runtime.getRuntime().exec(new String[] {"xdg-open", p.fileManipulation.output.getPath().toString()});
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

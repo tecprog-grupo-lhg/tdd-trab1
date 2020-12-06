@@ -1,15 +1,11 @@
 package app;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import exceptions.EscritaNaoPermitidaException;
+
 import exceptions.DelimitadorInvalidoException;
 import exceptions.FormatoDeSaídaInvalidoException;
-import exceptions.ArquivoNaoEncontradoException;
 import utils.Helpers;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,44 +13,8 @@ import java.io.IOException;
 public class Parser {
 
 	private char delimiter;
-	private File file;
-	private Path output;
+	public Persistência fileManipulation = new Persistência();
 	private ArrayList<ArrayList<String>> table;
-
-	public void setOutput(String output) throws EscritaNaoPermitidaException {
-		Path path = new File(output).toPath();
-		
-		if(!Files.isWritable(path)) {
-			throw new EscritaNaoPermitidaException(output);
-		}
-		
-		if(file.getName().equals("analysisTime.out")) {
-			this.output = new File(output + "/analysisTimeTab.out").toPath();
-		}
-		else {
-			this.output = new File(output + "/totalTimeTab.out").toPath();
-		}
-	}	
-
-	public Path getPath() {
-		return this.output;
-	}
-	
-	public void setFile(String fileName) throws ArquivoNaoEncontradoException {
-		File file = new File(fileName);
-		checkIfFileExists(file);
-		this.file = file;
-	}
-	
-	public String getFile() {
-		return this.file.getName();
-	}
-
-	private void checkIfFileExists(File file) throws ArquivoNaoEncontradoException {
-		if(!file.exists()) {
-			throw new ArquivoNaoEncontradoException(file.getName());
-		}
-	}
 
 	public char getDelimiter() {
 		return this.delimiter;
@@ -110,7 +70,7 @@ public class Parser {
 		table = new ArrayList<ArrayList<String>>();
 		int evolution = 0;
 		try {
-			Scanner sc = new Scanner(file);
+			Scanner sc = new Scanner(fileManipulation.input.getFile());
 			while (sc.hasNextLine()) {
 		        final String linha = sc.nextLine();
 
@@ -143,7 +103,7 @@ public class Parser {
 		ArrayList<Boolean> finished = new ArrayList<Boolean>();
 		
 		try {
-			FileWriter myWriter = new FileWriter(output.toString());
+			FileWriter myWriter = new FileWriter(fileManipulation.output.getPath().toString());
 			for(int i = 1; i <= evolutions; i++) {
 				myWriter.write(Integer.toString(i));
 				sizes.add(table.get(i-1).size());
@@ -203,7 +163,7 @@ public class Parser {
 		final int numberOfEvolutions = table.size();
 		
 		try {
-			FileWriter myWriter = new FileWriter(output.toString());
+			FileWriter myWriter = new FileWriter(fileManipulation.output.getPath().toString());
 		    for(int evolution = 0; evolution < numberOfEvolutions; evolution++) {
 		    	myWriter.write(Integer.toString(evolution+1));
 				
