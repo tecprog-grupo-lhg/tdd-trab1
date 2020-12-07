@@ -9,86 +9,102 @@ import exceptions.EscritaNaoPermitidaException;
 import exceptions.FormatoDeSaidaInvalidoException;
 
 public class Main {
-
 	public static void main(String[] args) {
-		Parser p = new Parser();
-		Scanner sc = new Scanner(System.in);
-		boolean invalido = true;
+		Parser parser = new Parser();
+		Scanner scanner = new Scanner(System.in);
 		
-		// analysisTime.out
-		// totalTime.out
+		chooseFile(parser, scanner);
+		chooseDelimiter(parser, scanner);
+		chooseOutputPath(parser, scanner);
+		chooseSequenceFormatValues(parser, scanner);
+		readFileAndWriteResults(parser);
+		openOutputFile(parser, scanner);
+		
+		System.out.println("Pronto!");
+	}
+
+	static void chooseFile(Parser parser, Scanner scanner) {
+		boolean isValid = false;
+
 		System.out.print("Insira o nome do arquivo que deseja abrir: ");
-		while(invalido) {
-			final String fileName = sc.next();
+		while(!isValid) {
+			final String fileName = scanner.next();
 
 			try {
-				p.setFile(fileName);
-				invalido = false;
+				parser.setFile(fileName);
+				isValid = true;
 			} catch (ArquivoNaoEncontradoException e) {
 				System.out.print("O arquivo '" + fileName + "' não foi encontrado. Tente novamente: ");
 			}
 		}
-		
-		invalido = true;
-		
+	}
+
+	static void chooseDelimiter(Parser parser, Scanner scanner) {
+		boolean isValid = false;
 		System.out.print("Insira o delimitador: ");
-		while(invalido) {
-			final String delimiter = sc.next();
+		while(!isValid) {
+			final String delimiter = scanner.next();
 			
 			try {
-				p.setDelimiter(delimiter);
-				invalido = false;
+				parser.setDelimiter(delimiter);
+				isValid = true;
 			} catch (DelimitadorInvalidoException e) {
 				System.out.print("O delimitador '" + delimiter + "' não é permitido. Tente novamente: ");
 			}
 		}
-		
-		// pegar \n
-		sc.nextLine();
-		invalido = true;
-		
-		// /home/henrique/Área de Trabalho/TPPE/Trab1
+
+		scanner.nextLine();
+	}
+
+	static void chooseOutputPath(Parser parser, Scanner scanner) {
+		boolean isValid = false;
 		System.out.print("Insira o caminho relativo do arquivo de saída: ");
-		while(invalido) {
-			final String output = sc.nextLine();
+		while(!isValid) {
+			final String output = scanner.nextLine();
 			
 			try {
-				p.setOutput(output);
-				invalido = false;
+				parser.setOutput(output);
+				isValid = true;
 			} catch (EscritaNaoPermitidaException e) {
 				System.out.print("O caminho '" + output + "' não tem permissão de escrita. Tente novamente: ");
 			}
 		}
 
-		invalido = true;
+		isValid = false;
+	}
+
+	static void chooseSequenceFormatValues(Parser parser, Scanner scanner) {
+		boolean isValid = false;
 		System.out.print("Insira o formato de saída das sequencias de valores (column / row): ");
-		while(invalido) {
-			final String format = sc.next();
+		while(!isValid) {
+			final String format = scanner.next();
 			
 			try {
-				p.setFormatToSave(format);
-				invalido = false;
+				parser.setFormatToSave(format);
+				isValid = true;
 			} catch (FormatoDeSaidaInvalidoException e) {
 				System.out.print("O formato '" + format + "' não é válido. Tente novamente: ");
 			}
 		}
-		
-		p.parse();
-		p.save();
-		
+	}
+
+	static void readFileAndWriteResults(Parser parser) {
+		parser.parse();
+		parser.save();
+	}
+
+	static void openOutputFile(Parser parser, Scanner scanner) {
 		System.out.print("Você gostaria de abrir o arquivo agora? s/n: ");
-		final String escolha = sc.next();
+		final String escolha = scanner.next();
 				
-		sc.close();
+		scanner.close();
 		
 		if(escolha.equals("s")) {
 			try {
-				Runtime.getRuntime().exec(new String[] {"xdg-open", p.getPath().toString()});
+				Runtime.getRuntime().exec(new String[] {"xdg-open", parser.getPath().toString()});
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		System.out.println("Pronto!");
 	}
 }
