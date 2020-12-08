@@ -4,7 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,16 +18,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import app.Parser;
-import exceptions.EscritaNaoPermitidaException;
-import exceptions.DelimitadorInvalidoException;
 import exceptions.ArquivoNaoEncontradoException;
-import exceptions.FormatoDeSaídaInvalidoException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Scanner;
+import exceptions.DelimitadorInvalidoException;
+import exceptions.EscritaNaoPermitidaException;
+import exceptions.FormatoDeSaidaInvalidoException;
  
 class ParserTest {
 
@@ -151,7 +151,7 @@ class ParserTest {
 
 
 	@Test
-    public void saveRowTest1() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
+    public void saveRowTest1() throws IOException, EscritaNaoPermitidaException, FormatoDeSaidaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
@@ -194,7 +194,7 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveRowTest2() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
+    public void saveRowTest2() throws IOException, EscritaNaoPermitidaException, FormatoDeSaidaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
@@ -237,7 +237,7 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveRowTest3() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
+    public void saveRowTest3() throws IOException, EscritaNaoPermitidaException, FormatoDeSaidaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
@@ -319,7 +319,7 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveColumnTest1() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
+    public void saveColumnTest1() throws IOException, EscritaNaoPermitidaException, FormatoDeSaidaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
@@ -490,20 +490,20 @@ class ParserTest {
 
 		
 	@Test
-	void testSetFormat1() throws FormatoDeSaídaInvalidoException {
+	void testSetFormat1() throws FormatoDeSaidaInvalidoException {
 		p = new Parser();
 		p.setFormatToSave("column");
 		assertEquals("column", p.getFormatToSave());
 	}
 
 	@Test
-	void testSetFormat2() throws FormatoDeSaídaInvalidoException {
+	void testSetFormat2() throws FormatoDeSaidaInvalidoException {
 		p = new Parser();
-		Assertions.assertThrows(FormatoDeSaídaInvalidoException.class, () -> p.setFormatToSave("formato aleatorio"));
+		Assertions.assertThrows(FormatoDeSaidaInvalidoException.class, () -> p.setFormatToSave("formato aleatorio"));
 	}
 		
 	@Test
-	void testSetFormat3() throws FormatoDeSaídaInvalidoException {
+	void testSetFormat3() throws FormatoDeSaidaInvalidoException {
 		p = new Parser();
 		p.setFormatToSave("column");
 		assertEquals("column", p.getFormatToSave());
@@ -517,12 +517,12 @@ class ParserTest {
 		p.setFormatToSave("row");
 		assertNotEquals("column", p.getFormatToSave());
 	
-		Assertions.assertThrows(FormatoDeSaídaInvalidoException.class, () -> p.setFormatToSave("outro formato"));
+		Assertions.assertThrows(FormatoDeSaidaInvalidoException.class, () -> p.setFormatToSave("outro formato"));
 	}
 		
 	@ParameterizedTest
 	@ValueSource(strings = { "row", "column" })
-	void setFormatParameterizedWithAllowedFormats(String format) throws FormatoDeSaídaInvalidoException {
+	void setFormatParameterizedWithAllowedFormats(String format) throws FormatoDeSaidaInvalidoException {
 		p = new Parser();
 		p.setFormatToSave(format);
 		assertEquals(format, p.getFormatToSave());
@@ -530,9 +530,9 @@ class ParserTest {
 
 	@ParameterizedTest
 	@ValueSource(strings = { "", "a", "abc", "outro formato", "formato invalido", "diagonal" })
-	void setFormatParameterizedWithInvalidFormats(String format) throws FormatoDeSaídaInvalidoException {
+	void setFormatParameterizedWithInvalidFormats(String format) throws FormatoDeSaidaInvalidoException {
 		p = new Parser();
-		Assertions.assertThrows(FormatoDeSaídaInvalidoException.class, () -> p.setFormatToSave(format));
+		Assertions.assertThrows(FormatoDeSaidaInvalidoException.class, () -> p.setFormatToSave(format));
 	}
 
 	private Object[][] parameters = new Object[][]{
@@ -673,7 +673,7 @@ class ParserTest {
 	}
 
 	@Test
-    public void saveColumnTest2() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
+    public void saveColumnTest2() throws IOException, EscritaNaoPermitidaException, FormatoDeSaidaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
@@ -717,7 +717,7 @@ class ParserTest {
     }
 	
 	@Test
-    public void saveColumnTest3() throws IOException, EscritaNaoPermitidaException, FormatoDeSaídaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
+    public void saveColumnTest3() throws IOException, EscritaNaoPermitidaException, FormatoDeSaidaInvalidoException, DelimitadorInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");
@@ -803,7 +803,7 @@ class ParserTest {
 	
 	@ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
-    void saveParameterizedTest(int index) throws EscritaNaoPermitidaException, DelimitadorInvalidoException, FormatoDeSaídaInvalidoException, ArquivoNaoEncontradoException {
+    void saveParameterizedTest(int index) throws EscritaNaoPermitidaException, DelimitadorInvalidoException, FormatoDeSaidaInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
 		File output = new File("analysisTimeTab.out");

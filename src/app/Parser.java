@@ -10,7 +10,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import exceptions.EscritaNaoPermitidaException;
 import exceptions.DelimitadorInvalidoException;
-import exceptions.FormatoDeSaídaInvalidoException;
+import exceptions.FormatoDeSaidaInvalidoException;
+import exceptions.ArquivoNaoEncontradoException;
 import utils.Helpers;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,14 +53,14 @@ public class Parser {
 		return this.formatToSave;
 	}
 	
-	public void setFormatToSave(String format) throws FormatoDeSaídaInvalidoException {
+	public void setFormatToSave(String format) throws FormatoDeSaidaInvalidoException {
 		checkValidOutputFormat(format);
 		this.formatToSave = format;
 	}
 	
-	private void checkValidOutputFormat(String format) throws FormatoDeSaídaInvalidoException {
+	private void checkValidOutputFormat(String format) throws FormatoDeSaidaInvalidoException {
 		if (!format.equals("column") && !format.equals("row")) {
-			throw new FormatoDeSaídaInvalidoException(format);
+			throw new FormatoDeSaidaInvalidoException(format);
 		}
 	}
 	
@@ -74,6 +75,35 @@ public class Parser {
 	public void parse() {
 		this.table = new Table(this).makeTable();
 	}
+
+	private void readLinesFromFile() throws FileNotFoundException {
+		Scanner scanner = new Scanner(this.fileManipulation.input.getFile());
+		int evolutionCounter = 0;
+		while (scanner.hasNextLine()) {
+		    final String linha = scanner.nextLine();
+		    evolutionCounter = handleEvolutionsFromFile(evolutionCounter, linha);
+		}
+		scanner.close();
+	}
+
+	private int handleEvolutionsFromFile(int evolutionCounter, final String linha) {
+		if(linha.charAt(0) == '-') {
+			evolutionCounter = createNewEvolution(evolutionCounter);
+		} 
+		else {
+			addNewTimeToEvolution(evolutionCounter, linha);
+		}
+		return evolutionCounter;
+	}
+
+	private int createNewEvolution(int evolutionCounter) {
+		this.table.add(new ArrayList<String>());
+		return evolutionCounter + 1;
+	}
+
+	private void addNewTimeToEvolution(int evolutionCounter, final String linha) {
+		this.table.get(evolutionCounter - 1).add(linha);
+	}
 	
 	public ArrayList<ArrayList<String>> getTable() {
 		return this.table;
@@ -84,31 +114,22 @@ public class Parser {
 	}
 	
 	private void saveAsColumn() {
-		final int evolutions = table.size();
-		ArrayList<Integer> sizes = new ArrayList<Integer>();
-		ArrayList<Boolean> finished = new ArrayList<Boolean>();
+		final int numberOfEvolutions = table.size();
+		ArrayList<Integer> evolutionSizes = new ArrayList<Integer>();
+		ArrayList<Boolean> hasEvolutionFinished = new ArrayList<Boolean>();
 		
 		try {
 			FileWriter myWriter = new FileWriter(fileManipulation.output.getPath().toString());
-			for(int i = 1; i <= evolutions; i++) {
-				myWriter.write(Integer.toString(i));
-				sizes.add(table.get(i-1).size());
-				finished.add(false);
-				
-				if(i != evolutions) {
-					myWriter.write(delimiter);
-				}
-			}
 			
-			myWriter.write("\n");
+			createHeaderRow(numberOfEvolutions, evolutionSizes, hasEvolutionFinished, myWriter);
 			
-			int remainingEvolutions = evolutions;
+			int remainingEvolutions = numberOfEvolutions;
 			int index = 0;
-			int lastEvolutionNotFinished = evolutions;
+			int lastEvolutionNotFinished = numberOfEvolutions;
 			
 			while(remainingEvolutions != 0) {
-				for(int i = 1; i <= evolutions; i++) {
-					if(finished.get(i-1)) {
+				for(int i = 1; i <= numberOfEvolutions; i++) {
+					if(hasEvolutionFinished.get(i-1)) {
 						if(i < lastEvolutionNotFinished && i != 1) {
 							myWriter.write(delimiter);
 						}
@@ -119,21 +140,14 @@ public class Parser {
 						myWriter.write(delimiter);
 					}
 					
-					if(index < sizes.get(i-1)) {
+					if(index < evolutionSizes.get(i-1)) {
 						myWriter.write(table.get(i-1).get(index));
 					}
 					
-					if(index == sizes.get(i-1) - 1) {
-						if(!finished.get(i-1)) {
-							remainingEvolutions--;
-							finished.set(i-1, true);
-							for(int j = lastEvolutionNotFinished; j > 0; j--) {
-								if(!finished.get(j-1)) {
-									lastEvolutionNotFinished = j;
-									break;
-								}
-							}
-						}
+					if(evolutionIsOver(index, i, evolutionSizes, hasEvolutionFinished)) {
+						remainingEvolutions--;
+						hasEvolutionFinished.set(i-1, true);
+						lastEvolutionNotFinished = getLastEvolutionNotFinished(lastEvolutionNotFinished, hasEvolutionFinished);
 					}
 				}
 				myWriter.write("\n");
@@ -145,26 +159,81 @@ public class Parser {
 		}
 	}
 	
+	private Boolean evolutionIsOver(int index, int i, ArrayList<Integer> evolutionSizes,
+			ArrayList<Boolean> hasEvolutionFinished) {
+		return index == evolutionSizes.get(i-1) - 1 && !hasEvolutionFinished.get(i-1);
+	}
+	
+	private int getLastEvolutionNotFinished(int lastEvolutionNotFinished, ArrayList<Boolean> hasEvolutionFinished) {
+		for(int j = lastEvolutionNotFinished; j > 0; j--) {
+			if(!hasEvolutionFinished.get(j-1)) {
+				lastEvolutionNotFinished = j;
+				break;
+			}
+		}
+		
+		return lastEvolutionNotFinished;
+	}
+
+	private void createHeaderRow(final int numberOfEvolutions, ArrayList<Integer> evolutionSizes,
+			ArrayList<Boolean> hasEvolutionFinished, FileWriter writer) throws IOException {
+		for(int evolution = 1; evolution <= numberOfEvolutions; evolution++) {
+			writeEvolutionIndexToFile(writer, evolution);
+			
+			addEvolutionSize(evolutionSizes, evolution);
+			
+			hasEvolutionFinished.add(false);
+			
+			addDelimiter(numberOfEvolutions, writer, evolution);
+		}
+		
+		writer.write("\n");
+	}
+
+	private void addEvolutionSize(ArrayList<Integer> evolutionSizes, int evolution) {
+		int evolutionSize = table.get(evolution-1).size();
+		evolutionSizes.add(evolutionSize);
+	}
+
+	private void addDelimiter(final int numberOfEvolutions, FileWriter writer, int evolution) throws IOException {
+		if(isNotLastEvolution(numberOfEvolutions, evolution)) {
+			writer.write(delimiter);
+		}
+	}
+
+	private boolean isNotLastEvolution(final int numberOfEvolutions, int evolution) {
+		return evolution != numberOfEvolutions;
+	}
+
+	private void writeEvolutionIndexToFile(FileWriter myWriter, int i) throws IOException {
+		myWriter.write(Integer.toString(i));
+	}
+	
 	private void saveAsRow() {
 		final int numberOfEvolutions = table.size();
 		
 		try {
 			FileWriter myWriter = new FileWriter(fileManipulation.output.getPath().toString());
-		    for(int evolution = 0; evolution < numberOfEvolutions; evolution++) {
-		    	myWriter.write(Integer.toString(evolution+1));
+		    for(int evolution = 1; evolution <= numberOfEvolutions; evolution++) {
+		    	writeEvolutionIndexToFile(myWriter, evolution);
 				
-		    	final ArrayList<String> currentEvolution = table.get(evolution);
+		    	final ArrayList<String> currentEvolution = table.get(evolution-1);
 				final int sizeOfEvolution = currentEvolution.size();
 				
-				for(int number = 0; number < sizeOfEvolution; number++) {
-					myWriter.write(delimiter);
-					myWriter.write(currentEvolution.get(number));
-				}
-				myWriter.write("\n");
+				writeEvolutionNumbers(myWriter, sizeOfEvolution, currentEvolution);
 			}
 		    myWriter.close();
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
+	}
+	
+	private void writeEvolutionNumbers(FileWriter myWriter, int sizeOfEvolution, ArrayList<String> currentEvolution) throws IOException {
+		for(int number = 0; number < sizeOfEvolution; number++) {
+			myWriter.write(delimiter);
+			myWriter.write(currentEvolution.get(number));
+		}
+		
+		myWriter.write("\n");
 	}
 }

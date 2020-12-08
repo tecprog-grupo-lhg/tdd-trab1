@@ -16,7 +16,7 @@ public class Table {
 		ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
 		int evolution = 0;
 		try {
-			Scanner sc = new Scanner(new File(this.parser.getFile()));
+			Scanner sc = new Scanner(this.parser.fileManipulation.input.getFile());
 			while (sc.hasNextLine()) {
 		        final String linha = sc.nextLine();
 
