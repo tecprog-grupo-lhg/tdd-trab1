@@ -4,6 +4,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import exceptions.EscritaNaoPermitidaException;
 import exceptions.DelimitadorInvalidoException;
 import exceptions.FormatoDeSaídaInvalidoException;
 import utils.Helpers;
@@ -67,25 +72,7 @@ public class Parser {
 	}
 
 	public void parse() {
-		table = new ArrayList<ArrayList<String>>();
-		int evolution = 0;
-		try {
-			Scanner sc = new Scanner(fileManipulation.input.getFile());
-			while (sc.hasNextLine()) {
-		        final String linha = sc.nextLine();
-
-		        if(linha.charAt(0) == '-') {
-		        	table.add(new ArrayList<String>());
-		        	evolution++;
-		        }
-		        else {
-		        	table.get(evolution-1).add(linha);
-		        }
-		    }
-			sc.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		this.table = new Table(this).makeTable();
 	}
 	
 	public ArrayList<ArrayList<String>> getTable() {
@@ -95,7 +82,6 @@ public class Parser {
 	public void setTable(ArrayList<ArrayList<String>> table) {
 		this.table = table;
 	}
-	
 	
 	private void saveAsColumn() {
 		final int evolutions = table.size();
