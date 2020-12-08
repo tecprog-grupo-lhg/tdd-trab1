@@ -2,8 +2,9 @@ package app;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
-
+import java.util.stream.IntStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,8 @@ import java.io.IOException;
 
 public class Parser {
 
+	private static final String DELIMITER_TOKEN = "!";
+	private static final String IGNORE_TOKEN = "@";
 	private char delimiter;
 	public Persistência fileManipulation = new Persistência();
 	private ArrayList<ArrayList<String>> table;
@@ -113,96 +116,73 @@ public class Parser {
 		this.table = table;
 	}
 	
+	  
 	private void saveAsColumn() {
 		final int numberOfEvolutions = table.size();
-		ArrayList<Integer> evolutionSizes = new ArrayList<Integer>();
-		ArrayList<Boolean> hasEvolutionFinished = new ArrayList<Boolean>();
-		
-		try {
-			FileWriter myWriter = new FileWriter(fileManipulation.output.getPath().toString());
-			
-			createHeaderRow(numberOfEvolutions, evolutionSizes, hasEvolutionFinished, myWriter);
-			
-			int remainingEvolutions = numberOfEvolutions;
-			int index = 0;
-			int lastEvolutionNotFinished = numberOfEvolutions;
-			
-			while(remainingEvolutions != 0) {
-				for(int i = 1; i <= numberOfEvolutions; i++) {
-					if(hasEvolutionFinished.get(i-1)) {
-						if(i < lastEvolutionNotFinished && i != 1) {
-							myWriter.write(delimiter);
-						}
-						continue;
-					}
-					
-					if(i != 1) {
-						myWriter.write(delimiter);
-					}
-					
-					if(index < evolutionSizes.get(i-1)) {
-						myWriter.write(table.get(i-1).get(index));
-					}
-					
-					if(evolutionIsOver(index, i, evolutionSizes, hasEvolutionFinished)) {
-						remainingEvolutions--;
-						hasEvolutionFinished.set(i-1, true);
-						lastEvolutionNotFinished = getLastEvolutionNotFinished(lastEvolutionNotFinished, hasEvolutionFinished);
+	    final int biggestEvolutionSize = findBiggestEvolution(numberOfEvolutions);
+	    
+	    try {
+	    	FileWriter writer = new FileWriter(this.fileManipulation.output.getPath().toString());	      
+	    	String[][] transposedTable = new String[biggestEvolutionSize][numberOfEvolutions];
+	    	for(int i = 0; i < numberOfEvolutions; ++i) {
+	    		writeEvolutionIndexToFile(writer, i+1);  
+	    		addDelimiter(i+1, writer, numberOfEvolutions);
+	    		populateTransposedTable(biggestEvolutionSize, transposedTable, i);
+	    	}
+			String result = makeResultString(numberOfEvolutions, biggestEvolutionSize, transposedTable);
+			writer.write(result);
+			writer.close();
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
+	}
+
+	private String makeResultString(final int numberOfEvolutions, final int biggestEvolutionSize,
+			String[][] transposedTable) {
+		StringBuilder sb = new StringBuilder("\n");
+		for(int i = 0; i < biggestEvolutionSize; ++i) {
+			for(int j = 0; j < numberOfEvolutions; ++j) {
+				if (transposedTable[i][j] != IGNORE_TOKEN) {
+					sb.append(transposedTable[i][j]);
+					if (j+1 != numberOfEvolutions && transposedTable[i][j+1] != IGNORE_TOKEN) {
+						sb.append(delimiter);
 					}
 				}
-				myWriter.write("\n");
-				index++;
 			}
-		    myWriter.close();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-	}
-	
-	private Boolean evolutionIsOver(int index, int i, ArrayList<Integer> evolutionSizes,
-			ArrayList<Boolean> hasEvolutionFinished) {
-		return index == evolutionSizes.get(i-1) - 1 && !hasEvolutionFinished.get(i-1);
-	}
-	
-	private int getLastEvolutionNotFinished(int lastEvolutionNotFinished, ArrayList<Boolean> hasEvolutionFinished) {
-		for(int j = lastEvolutionNotFinished; j > 0; j--) {
-			if(!hasEvolutionFinished.get(j-1)) {
-				lastEvolutionNotFinished = j;
-				break;
-			}
+			sb.append("\n");
 		}
 		
-		return lastEvolutionNotFinished;
+		String result = sb.toString().replaceAll(DELIMITER_TOKEN, "");
+		return result;
 	}
 
-	private void createHeaderRow(final int numberOfEvolutions, ArrayList<Integer> evolutionSizes,
-			ArrayList<Boolean> hasEvolutionFinished, FileWriter writer) throws IOException {
-		for(int evolution = 1; evolution <= numberOfEvolutions; evolution++) {
-			writeEvolutionIndexToFile(writer, evolution);
-			
-			addEvolutionSize(evolutionSizes, evolution);
-			
-			hasEvolutionFinished.add(false);
-			
-			addDelimiter(numberOfEvolutions, writer, evolution);
+	private void populateTransposedTable(final int biggestEvolutionSize, String[][] transposedTable, int i) {
+		for(int j = 0; j < biggestEvolutionSize; ++j) {
+			if (j < table.get(i).size()) {
+				transposedTable[j][i] = table.get(i).get(j);
+				replaceIgnoreTokensWithDelimiterTokens(transposedTable, i, j);
+			} else {
+				transposedTable[j][i] = IGNORE_TOKEN;
+			}
 		}
-		
-		writer.write("\n");
 	}
 
-	private void addEvolutionSize(ArrayList<Integer> evolutionSizes, int evolution) {
-		int evolutionSize = table.get(evolution-1).size();
-		evolutionSizes.add(evolutionSize);
+	private int findBiggestEvolution(final int numberOfEvolutions) {
+		return IntStream.range(0, numberOfEvolutions)
+	    		.map(i -> { return table.get(i).size(); })
+	    		.max()
+	    		.getAsInt();
 	}
 
-	private void addDelimiter(final int numberOfEvolutions, FileWriter writer, int evolution) throws IOException {
-		if(isNotLastEvolution(numberOfEvolutions, evolution)) {
+	private void replaceIgnoreTokensWithDelimiterTokens(String[][] transposedTable, int i, int j) {
+		for(int z = 1; i-z >= 0 && transposedTable[j][i-z] == IGNORE_TOKEN; transposedTable[j][i-z] = DELIMITER_TOKEN, z++);
+	}
+
+
+	private void addDelimiter(final int evolution, FileWriter writer, int numberOfEvolutions) throws IOException {
+		if(evolution != numberOfEvolutions) {
 			writer.write(delimiter);
 		}
-	}
-
-	private boolean isNotLastEvolution(final int numberOfEvolutions, int evolution) {
-		return evolution != numberOfEvolutions;
 	}
 
 	private void writeEvolutionIndexToFile(FileWriter myWriter, int i) throws IOException {

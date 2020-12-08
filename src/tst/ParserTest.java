@@ -35,6 +35,11 @@ class ParserTest {
 			new ArrayList<String>(Arrays.asList("333")))
 		),
 		new ArrayList<ArrayList<String>>( Arrays.asList(
+				new ArrayList<String>(Arrays.asList("333")),
+				new ArrayList<String>(Arrays.asList("333", "807", "123")),
+				new ArrayList<String>(Arrays.asList("333", "807")))
+		),
+		new ArrayList<ArrayList<String>>( Arrays.asList(
 			new ArrayList<String>(Arrays.asList("333")),
 			new ArrayList<String>(Arrays.asList("333", "807")),
 			new ArrayList<String>(Arrays.asList("333", "807", "123")))
@@ -58,6 +63,17 @@ class ParserTest {
 				"333;333;333",
 				"807;807",
 				"123"))
+		},
+		{
+			new ArrayList<String>(Arrays.asList(
+				"1;333",
+				"2;333;807;123",
+				"3;333;807")),
+			new ArrayList<String>(Arrays.asList(
+				"1;2;3",
+				"333;333;333",
+				";807;807",
+				";123"))
 		},
 		{
 			new ArrayList<String>(Arrays.asList(
@@ -802,7 +818,7 @@ class ParserTest {
     }
 	
 	@ParameterizedTest
-    @ValueSource(ints = {0, 1, 2})
+    @ValueSource(ints = {0, 1, 2, 3})
     void saveParameterizedTest(int index) throws EscritaNaoPermitidaException, DelimitadorInvalidoException, FormatoDeSaidaInvalidoException, ArquivoNaoEncontradoException {
 		p = new Parser();
 		p.fileManipulation.input.setFile("analysisTime.out");
